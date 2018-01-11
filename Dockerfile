@@ -7,7 +7,8 @@ LABEL org.label-schema.build-date=$BUILD_DATE \
       org.label-schema.vcs-url="https://github.com/robbyoconnor/dockup.git" \
       org.label-schema.vcs-ref=$VCS_REF
 
-ENV CRON_TIME="0 0 * * *"
+ENV CRON_INTERVALS false
+WORKDIR "/dockup"
 CMD ["/dockup/run.sh"]
 ENV S3_BUCKET_NAME docker-backups.example.com
 ENV AWS_ACCESS_KEY_ID **DefineMe**
