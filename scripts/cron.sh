@@ -1,9 +1,9 @@
 #!/bin/bash
 
 : ${CRON_HOURLY:="0 */1 * * *"}
-: ${CRON_DAILY:="30 3 * * *"}
-: ${CRON_WEEKLY:="0 3 * * 1"}
-: ${CRON_MONTHLY:="30 2 1 * *"}
+: ${CRON_DAILY:="15 4 * * *"}
+: ${CRON_WEEKLY:="30 3 * * 1"}
+: ${CRON_MONTHLY:="45 2 1 * *"}
 LOGFIFO='/dockup/cron.fifo'
 
 if [[ ! -e "$LOGFIFO" ]]; then
