@@ -17,6 +17,7 @@ Why the name? Docker + Backup = Dockup
 Instead of backing up volumes you can also run tasks that provide the files to be backed up. See the following projects as examples on building on Dockup for that purpose:
 
 * [robbyoconnor/dockup-mongo](https://github.com/robbyoconnor/dockup-mongo) - Uses `mongodump` and `mongorestore` to backup and restore a MongoDB instance
+* [mimicmobile/dockup-postgres](https://github.com/mimicmobile/dockup-postgres) - Uses `pg_dump` and `pg_restore` to backup and restore a PostgreSQL instance
 
 # Usage
 
@@ -71,9 +72,21 @@ For more complex backup tasks as dumping a database, you can optionally define t
 Instead of providing paths manually you can set the `PATHS_TO_BACKUP` to `auto`.
 Using this setting the backup script will try to the detect the volumes mounted into the running backup container and include these into the backup archive.
 
-### Scheduling
+### Scheduling (snapshots)
 
 If you want `dockup` to run the backup as a cron task, you can set the environment variable `CRON_TIME` to the desired frequency, for example `CRON_TIME=0 0 * * *` to backup every day at midnight.
+
+### Scheduling (intervals)
+
+Alternatively if you would like `dockup` to run interval backups as cron jobs (hourly, daily, weekly and monthly), set the environment variable `CRON_INTERVALS` to `true`.  Interval backups are named `$BACKUP_NAME-<interval>.tar.gz` and will overwrite existing backups of the same interval name.  The real benefit of interval backups comes when you enable [versioning](https://docs.aws.amazon.com/AmazonS3/latest/user-guide/enable-versioning.html) and create [lifecycle](https://docs.aws.amazon.com/AmazonS3/latest/user-guide/create-lifecycle.html) rules to automatically delete older previous versions of your backups.
+
+By default hourly backups are done every hour on the hour.  Daily backups are done at 3:30am, weekly on Monday at 3:00am and monthly on the 1st of each month at 2:30am.
+
+You can specify when and if each backup will fire by setting any of the respective environment variables (`CRON_HOURLY`, `CRON_DAILY`, `CRON_WEEKLY` and `CRON_MONTHLY`) to the desired frequency.
+
+For example, `CRON_WEEKLY=0 2 * * 0` would run the weekly backup at 2am on Sundays.
+
+If you wish to disable any of the intervals, you can do so by setting the value to `#`.
 
 ### Retries
 
@@ -96,7 +109,7 @@ For more complex restore operations, you can define a command to be run once the
 
 ## Encryption
 
-You can use GnuPG to encrypt backup archives and decrpyt them again when you need to restore them.
+You can use GnuPG to encrypt backup archives and decrypt them again when you need to restore them.
 You need a GnuPG public key for encryption and the corresponding private key for decryption.
 Keep the private key safe (and secret), otherwise you will not be able to restore your backups.
 

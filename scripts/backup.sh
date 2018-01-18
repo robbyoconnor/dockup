@@ -15,7 +15,11 @@ SECONDS=0
 echo "[$start_time] Initiating backup $BACKUP_NAME..."
 
 # Get timestamp
-: ${BACKUP_SUFFIX:=.$(date +"%Y-%m-%d-%H-%M-%S")}
+if [[ "$CRON_INTERVALS" = "true" ]]; then
+  : ${BACKUP_SUFFIX:=-$1}
+else
+  : ${BACKUP_SUFFIX:=.$(date +"%Y-%m-%d-%H-%M-%S")}
+fi
 tarball=$BACKUP_NAME$BACKUP_SUFFIX.tar.gz
 
 # If a pre-backup command is defined, run it before creating the tarball
